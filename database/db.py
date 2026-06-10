@@ -3,6 +3,10 @@ import sqlite3
 
 from database.schema import create_tables
 from config import DB_PATH
+from tools.memory_tools import (
+    get_memory,
+    save_band_profile
+)
 
 
 def init_db():
@@ -16,3 +20,6 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+    if not get_memory("band_name"):
+        save_band_profile()
