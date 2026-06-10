@@ -1,5 +1,5 @@
 from graph.router import route_request
-
+from agents.edit_gig_agent import edit_gig_agent
 from agents.planner import gig_planner
 from agents.payment_agent import payment_agent
 from agents.setlist_agent import setlist_agent
@@ -7,6 +7,8 @@ from agents.gig_creator_agent import gig_creator_agent
 from agents.payment_followup_agent import payment_followup_agent
 from agents.payout_agent import payout_agent
 from agents.payment_received_agent import payment_received_agent
+from agents.partial_payment_agent import partial_payment_agent
+
 
 
 def run_workflow(user_input):
@@ -37,8 +39,14 @@ def run_workflow(user_input):
     elif state["intent"] == "payout":
         state.update(payout_agent(state))
 
+    elif state["intent"] == "edit_gig":
+        state.update(edit_gig_agent(state))
+
     elif state["intent"] == "setlist":
         state.update(setlist_agent(state))
+
+    elif state["intent"] == "partial_payment":
+        state.update(partial_payment_agent(state))
 
     else:
         state["response"] = "Sorry, I don't understand that request."

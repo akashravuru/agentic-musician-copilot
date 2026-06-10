@@ -100,3 +100,67 @@ def mark_paid(venue):
     conn.close()
 
     return updated_rows
+
+
+def record_partial_payment(venue, amount):
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT fee, paid
+        FROM gigs
+        WHERE venue = ?
+        ORDER BY id DESC
+        LIMIT 1
+    """, (venue,))
+
+    result = cursor.fetchone()
+
+    if not result:
+        conn.close()
+        return None
+
+    fee, current_paid = result
+
+    new_paid = current_paid + amount
+
+    if new_paid > fee:
+        new_paid = fee
+
+    pending = fee - new_paid
+
+    payment_status = (
+        "Paid"
+        if pending <= 0
+        else "Pending"
+    )
+
+    cursor.execute("""
+        UPDATE gigs
+        SET
+            paid = ?,
+            pending = ?,
+            payment_status = ?
+        WHERE id = (
+            SELECT id
+            FROM gigs
+            WHERE venue = ?
+            ORDER BY id DESC
+            LIMIT 1
+        )
+    """, (
+        new_paid,
+        pending,
+        payment_status,
+        venue
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return {
+        "paid": new_paid,
+        "pending": pending,
+        "status": payment_status
+    }

@@ -5,6 +5,8 @@ def route_request(state: MusicianState):
 
     user_input = state["user_input"].lower()
 
+    
+
     if (
         "has paid" in user_input
         or "paid us" in user_input
@@ -14,9 +16,16 @@ def route_request(state: MusicianState):
         or "settled payment" in user_input
     ):
         return {"intent": "payment_received"}
+    elif "received" in user_input and any(
+        char.isdigit() for char in user_input
+    ):
+        return {"intent": "partial_payment"}
 
     elif "follow-up" in user_input or "follow up" in user_input:
         return {"intent": "payment_followup"}
+    
+    elif "update" in user_input and "fee" in user_input:
+        return {"intent": "edit_gig"}
 
     elif "payout" in user_input or "split" in user_input:
         return {"intent": "payout"}
@@ -26,7 +35,7 @@ def route_request(state: MusicianState):
 
     elif "setlist" in user_input:
         return {"intent": "setlist"}
-
+    
     elif "add gig" in user_input:
         return {"intent": "create_gig"}
 
