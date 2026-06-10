@@ -43,6 +43,6 @@ def route_request(state: MusicianState):
         return {"intent": "delete_gig"}
 
     elif "gig" in user_input:
-        return {"intent": "gig"}
+        return {"intent": "gig"}s
 
     return {"intent": "unknown"}
