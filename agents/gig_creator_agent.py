@@ -1,45 +1,34 @@
 from graph.state import MusicianState
-from llm import model
-from tools.memory_tools import get_memory
-import json
 from tools.gig_tools import add_gig
+import re
+
 
 def gig_creator_agent(state):
 
-    band_name = get_memory("band_name")
+    user_input = state["user_input"]
 
-    prompt = f"""
-    Extract the following information from the user request.
+    pattern = r"add gig at (.*?) on (.*?) for (\d+)"
 
-    Return ONLY valid JSON.
-
-    Fields:
-
-    venue
-    gig_date
-    fee
-
-    Band:
-    {band_name}
-
-    User Request:
-    {state["user_input"]}
-    """
-
-    response = model.generate_content(prompt)
-    
-    cleaned_response = (
-        response.text
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
+    match = re.search(
+        pattern,
+        user_input,
+        re.IGNORECASE
     )
 
-    gig_data = json.loads(cleaned_response)
+    if not match:
+        return {
+            "response":
+            "Please use: Add gig at <venue> on <date> for <fee>"
+        }
+
+    venue = match.group(1).strip()
+    gig_date = match.group(2).strip()
+    fee = float(match.group(3))
+
     result = add_gig(
-        venue=gig_data["venue"],
-        gig_date=gig_data["gig_date"],
-        fee=gig_data["fee"],
+        venue=venue,
+        gig_date=gig_date,
+        fee=fee,
         paid=0,
         contact_person="",
         notes=""
@@ -48,4 +37,3 @@ def gig_creator_agent(state):
     return {
         "response": result
     }
-    
