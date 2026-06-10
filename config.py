@@ -1,0 +1,4 @@
+DB_PATH = "data/musician.db"
+
+DEFAULT_PERFORMERS = 6
+SOUND_ENGINEER_PERCENT = 0.10
