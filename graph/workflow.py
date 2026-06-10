@@ -8,6 +8,7 @@ from agents.payment_followup_agent import payment_followup_agent
 from agents.payout_agent import payout_agent
 from agents.payment_received_agent import payment_received_agent
 from agents.partial_payment_agent import partial_payment_agent
+from agents.delete_gig_agent import delete_gig_agent
 
 
 
@@ -47,6 +48,9 @@ def run_workflow(user_input):
 
     elif state["intent"] == "partial_payment":
         state.update(partial_payment_agent(state))
+    
+    elif state["intent"] == "delete_gig":
+        state.update(delete_gig_agent(state))
 
     else:
         state["response"] = "Sorry, I don't understand that request."

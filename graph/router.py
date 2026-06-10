@@ -36,8 +36,11 @@ def route_request(state: MusicianState):
     elif "setlist" in user_input:
         return {"intent": "setlist"}
     
-    elif "add gig" in user_input:
+    elif "add" in user_input and "gig" in user_input:
         return {"intent": "create_gig"}
+    
+    elif "delete gig" in user_input:
+        return {"intent": "delete_gig"}
 
     elif "gig" in user_input:
         return {"intent": "gig"}

@@ -1,61 +1,35 @@
-import json
-
-from llm import model
 from tools.payout_tools import calculate_payout
 
 
 def payout_agent(state):
 
-    prompt = f"""
-    Extract the venue name from the user's request.
+    try:
 
-    User Request:
-    {state["user_input"]}
+        user_input = state["user_input"]
 
-    Return ONLY valid JSON.
+        if "for" not in user_input.lower():
+            return {
+                "response": "Use: Calculate payout for <venue>"
+            }
 
-    Example:
-    {{
-        "venue": "Prism"
-    }}
-    """
+        venue = user_input.split("for", 1)[1].strip()
 
-    response = model.generate_content(prompt)
+        payout = calculate_payout(venue)
 
-    cleaned_response = (
-        response.text
-        .replace("```json", "")
-        .replace("```", "")
-        .strip()
-    )
+        if not payout:
+            return {
+                "response": f"No gig found for {venue}."
+            }
 
-    venue_data = json.loads(cleaned_response)
-
-    venue = venue_data["venue"]
-
-    payout = calculate_payout(venue)
-
-    if not payout:
         return {
-            "response": f"No gig found for {venue}."
-        }
-
-    return {
-        "response": f"""
+            "response": f"""
 Venue: {venue}
 
 Venue Fee: ₹{payout['fee']:,.0f}
-
-Sound Engineer (10%):
-₹{payout['sound_engineer_share']:,.0f}
-
-Band Pool:
-₹{payout['band_pool']:,.0f}
-
-Performers:
-{payout['performers']}
-
-Per Performer:
-₹{payout['per_performer']:,.0f}
 """
-    }
+        }
+
+    except Exception as e:
+        return {
+            "response": f"ERROR: {str(e)}"
+        }

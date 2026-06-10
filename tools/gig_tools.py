@@ -104,3 +104,27 @@ def update_gig_fee(venue, new_fee):
     conn.close()
 
     return f"{venue} fee updated to ₹{new_fee:,.0f}"
+
+def delete_gig(venue):
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        DELETE FROM gigs
+        WHERE id = (
+            SELECT id
+            FROM gigs
+            WHERE venue = ?
+            ORDER BY id DESC
+            LIMIT 1
+        )
+    """, (venue,))
+
+    conn.commit()
+
+    deleted_rows = cursor.rowcount
+
+    conn.close()
+
+    return deleted_rows
