@@ -2,6 +2,7 @@ from graph.state import MusicianState
 from llm import model
 from tools.memory_tools import get_memory
 
+
 def gig_planner(state):
 
     band_name = get_memory("band_name")
@@ -25,8 +26,17 @@ def gig_planner(state):
     Keep it practical and concise.
     """
 
-    response = model.generate_content(prompt)
+    try:
 
-    return {
-        "response": response.text
-    }
+        response = model.generate_content(prompt)
+
+        return {
+            "response": response.text
+        }
+
+    except Exception:
+
+        return {
+            "response":
+            "Gig planning is temporarily unavailable. Please try again later."
+        }

@@ -156,17 +156,25 @@ if page == "AI Copilot":
 
         if user_input.strip():
 
-            with st.spinner("Processing..."):
+            try:
 
-                result = run_workflow(
-                    user_input
+                with st.spinner("Processing..."):
+
+                    result = run_workflow(
+                        user_input
+                    )
+
+                st.success("Response")
+
+                st.markdown(
+                    result["response"]
                 )
 
-            st.success("Response")
+            except Exception:
 
-            st.markdown(
-                result["response"]
-            )
+                st.error(
+                    "Something went wrong. Please try again later."
+                )
 
 # =================================
 # PAYMENTS

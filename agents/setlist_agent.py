@@ -7,6 +7,7 @@ def setlist_agent(state):
 
     band_name = get_memory("band_name")
     genre = get_memory("genre")
+
     prompt = f"""
     You are a live performance setlist expert.
 
@@ -17,6 +18,7 @@ def setlist_agent(state):
     {state["user_input"]}
 
     Create:
+
     1. Opening Song Type
     2. Energy Build
     3. Peak Moment
@@ -24,8 +26,18 @@ def setlist_agent(state):
 
     Keep it concise.
     """
-    response = model.generate_content(prompt)
 
-    return {
-    "response": response.text
-    }
+    try:
+
+        response = model.generate_content(prompt)
+
+        return {
+            "response": response.text
+        }
+
+    except Exception:
+
+        return {
+            "response":
+            "Setlist generation is temporarily unavailable. Please try again later."
+        }

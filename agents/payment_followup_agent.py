@@ -17,7 +17,10 @@ def payment_followup_agent(state: MusicianState):
     target_venue = None
 
     if "for" in user_input:
-        target_venue = state["user_input"].split("for", 1)[1].strip()
+        target_venue = state["user_input"].split(
+            "for",
+            1
+        )[1].strip()
 
     venue = None
     pending = None
@@ -54,8 +57,17 @@ def payment_followup_agent(state: MusicianState):
     - Maximum 80 words
     """
 
-    response = model.generate_content(prompt)
+    try:
 
-    return {
-        "response": response.text.strip()
-    }
+        response = model.generate_content(prompt)
+
+        return {
+            "response": response.text.strip()
+        }
+
+    except Exception:
+
+        return {
+            "response":
+            "Payment follow-up generation is temporarily unavailable. Please try again later."
+        }
